@@ -1,218 +1,202 @@
-/* Evidence-linked, offline-only playback. The three JSON files are exported
- * from fixed MuJoCo episodes; this page does not simulate RF or robot motion. */
+/* Synchronized playback of three recorded MuJoCo/QPSK experiments.
+   No new communication or robot physics is calculated in the browser. */
 (() => {
-  'use strict';
-  const $ = (id) => document.getElementById(id);
-  const video = $('replayVideo');
-  const app = $('replayApp');
-  const status = $('traceStatus');
-  const runButtons = Array.from(document.querySelectorAll('[data-run]'));
-  const scenarios = {
-    'ideal': { label: 'IDEAL MESSAGE · scheduled delivery', video: './assets/video/industrial-ideal.mp4', data: './assets/data/ideal.json', signal: 'Ideal / no PHY' },
-    'noiseless': { label: 'NOISELESS QPSK · full wire and PHY', video: './assets/video/industrial-noiseless.mp4', data: './assets/data/noiseless.json', signal: 'QPSK / noiseless' },
-    'awgn-8db': { label: 'AWGN 8 dB · fixed seed 303', video: './assets/video/industrial-awgn-8db.mp4', data: './assets/data/awgn-8db.json', signal: '8 dB AWGN' }
-  };
-  let selected = 'awgn-8db', currentData = null, token = 0, raf = 0, headingTrace = [], selectedEventKey = null;
-  const cache = new Map();
-  const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
-  const num = (x) => typeof x === 'number' && Number.isFinite(x);
-  const format = (x,dec=2,unit='') => num(x) ? x.toFixed(dec)+unit : '—';
-  const pickTime = (e) => num(e.rx_time_s) ? e.rx_time_s : (num(e.tx_time_s) ? e.tx_time_s : 0);
-  const updateStatus = (message, cls='') => { status.textContent=message; status.className='trace-loading '+cls; };
-  const readableStatus = (s) => !s ? '—' : String(s).replace(/_/g,' ').toUpperCase();
-  function setFrameStatus(id, state){
-    const el=$(id);
-    const ok=state==='accepted';
-    el.className=ok?'accepted':state?'rejected':'';
-    el.textContent=state?readableStatus(state):'No frame yet';
-  }
-  function runSummary(run){
-    const data=currentData;
-    if(!data) return;
-    const videoDuration=num(data.video_clock?.duration_s)?data.video_clock.duration_s:video.duration;
-    const expected=run==='awgn-8db'?11:0;
-    const rejects=(data.events||[]).filter(e=>e.status!=='accepted').length;
-    if(run==='awgn-8db' && rejects!==expected){
-      updateStatus('Data validation warning: 8 dB trace should contain exactly 11 rejected frames; found '+rejects+'.','error');
-    } else {
-      updateStatus('Trace loaded · '+(data.events||[]).length+' link events · '+(data.ticks||[]).length+' policy ticks · '+format(videoDuration,2,' s'),'ok');
-    }
-    $('eventsTotal').textContent=rejects+' REJECT'+(rejects===1?'':'S');
-    const list=$('eventButtons'); list.replaceChildren();
-    $('eventsDescription').textContent=rejects?'Click an error to seek the video and inspect the corresponding communication state.':'This run has no rejected frames; all delivered packets passed their receiver checks.';
-    if(!rejects){
-      const p=document.createElement('p');p.className='event-placeholder';p.textContent='All '+data.events.length+' frames accepted in this run.';list.appendChild(p);return;
-    }
-    data.events.forEach((e,index)=>{
-      if(e.status==='accepted') return;
-      const b=document.createElement('button');
-      b.type='button';b.className='event-chip';
-      const t=pickTime(e);
-      b.dataset.eventKey=String(index);
-      const time=document.createElement('span');time.className='chip-time';time.textContent='T+'+format(t,2,'s');
-      const direction=document.createElement('span');direction.className='chip-type';direction.textContent=e.message_type||e.direction||'FRAME';
-      const stat=document.createElement('span');stat.className='chip-status';stat.textContent=readableStatus(e.status);
-      b.append(time,direction,stat);
-      b.setAttribute('aria-label','Seek to '+readableStatus(e.status)+' at '+format(t,2,' seconds'));
-      b.addEventListener('click',()=>{
-        if(!currentData)return;
-        selectedEventKey=String(index);
-        const vtime=simulationToVideoTime(t);
-        if(num(vtime)){video.currentTime=clamp(vtime,0,Math.max(0,(video.duration||26.32)-.05));updateAtTime(video.currentTime);}
-        video.pause(); highlightEventButtons();
-      });
-      list.appendChild(b);
-    });
-  }
-  function highlightEventButtons(){
-    $('eventButtons').querySelectorAll('button').forEach(button=>{
-      const isActive=button.dataset.eventKey===selectedEventKey;
-      button.classList.toggle('active',isActive);
-      button.setAttribute('aria-pressed',String(isActive));
-    });
-  }
-  function simulationToVideoTime(t){
-    const map=currentData?.video_clock?.frame_map;
-    if(!Array.isArray(map)||!map.length)return t;
-    let lo=0,hi=map.length;
-    while(lo<hi){const m=(lo+hi)>>>1;if(map[m].sim_time_s<t)lo=m+1;else hi=m}
-    const i=clamp(lo,0,map.length-1),v=map[i].video_time_s;
-    return num(v)?v:t;
-  }
-  function frameForVideoTime(seconds){
-    const frames=currentData?.video_clock?.frame_map;
-    if(!Array.isArray(frames)||!frames.length)return null;
-    const fps=currentData.video_clock.fps||25;
-    const i=clamp(Math.floor(Math.max(0,seconds)*fps+1e-8),0,frames.length-1);
-    return frames[i];
-  }
-  function latestEvents(events,simTime){
-    let lo=0,hi=events.length;
-    while(lo<hi){const mid=(lo+hi)>>>1;if(pickTime(events[mid])<=simTime+1e-9)lo=mid+1;else hi=mid}
-    return lo;
-  }
-  function obsRange(tick){
-    const o=tick?.controller_input||tick?.raw_observation;
-    return o && o.valid===true && num(o.range_m)?o.range_m:null;
-  }
-  function obsBearing(tick){
-    const o=tick?.controller_input||tick?.raw_observation;
-    return o && o.valid===true && num(o.bearing_rad)?o.bearing_rad:null;
-  }
-  function cmdVx(cmd){
-    if(cmd && typeof cmd==='object'){
-      if(num(cmd.vx)) return cmd.vx;
-      if(num(cmd.vx_m_s))return cmd.vx_m_s;
-    }
-    return null;
-  }
-  function currentYaw(tick){return num(tick?.yaw_rad)?tick.yaw_rad:null}
-  function drawHeading(){
-    const ticks=currentData?.ticks||[];
-    headingTrace=ticks.filter(t=>num(currentYaw(t))&&num(t.time_s));
-    if(headingTrace.length<2){$('headingPath').setAttribute('d','');return}
-    // Unwrap yaw to show the real search turn rather than wrapped discontinuities.
-    const expanded=[];let prior=headingTrace[0].yaw_rad,heading=prior;
-    for(const t of headingTrace){let d=t.yaw_rad-prior;while(d>Math.PI)d-=2*Math.PI;while(d< -Math.PI)d+=2*Math.PI;heading+=d;expanded.push({time:t.time_s,value:heading});prior=t.yaw_rad}
-    const low=Math.min(...expanded.map(x=>x.value)),high=Math.max(...expanded.map(x=>x.value)),spread=Math.max(.01,high-low);
-    const duration=currentData.video_clock?.duration_s||26.32;
-    const path=expanded.filter((_,i)=>i%4===0||i===expanded.length-1).map((p,i)=>(i?'L':'M')+(34+clamp(p.time/duration,0,1)*690).toFixed(1)+','+(116-(p.value-low)/spread*98).toFixed(1)).join(' ');
-    $('headingPath').setAttribute('d',path);
-    const end=$('headingChart').querySelectorAll('text');if(end.length)end[end.length-1].textContent=Math.round(duration)+'s';
-  }
-  function updateAtTime(seconds){
-    $('stampTime').textContent='T+'+format(Math.max(0,seconds),2,'s');
-    if(!currentData)return;
-    const mapped=frameForVideoTime(seconds);
-    if(!mapped)return;
-    const idx=clamp(mapped.trace_index||0,0,currentData.ticks.length-1);
-    const tick=currentData.ticks[idx]||{};
-    const t=num(mapped.sim_time_s)?mapped.sim_time_s:Math.max(0,seconds);
-    $('controllerState').textContent=readableStatus(tick.controller_state);
-    $('targetRange').textContent=format(obsRange(tick),2,' m');
-    const bearing=obsBearing(tick);$('targetBearing').textContent=num(bearing)?format(bearing*180/Math.PI,1,'°'):'—';
-    $('cmdAge').textContent=format(tick.command_age_ms,0,' ms');
-    $('appliedVx').textContent=format(cmdVx(tick.applied_cmd),3,' m/s');
-    const yaw=currentYaw(tick);$('headingNow').textContent=num(yaw)?format(yaw*180/Math.PI,1,'° (wrapped)'):'—';
-    const dur=currentData.video_clock?.duration_s||26.32;
-    const x=34+clamp(seconds/dur,0,1)*690;
-    $('headingCursor').setAttribute('x1',String(x));$('headingCursor').setAttribute('x2',String(x));
-    const events=currentData.events||[];const end=latestEvents(events,t);const recent=events.slice(0,end);
-    const accepted=recent.reduce((n,e)=>n+(e.status==='accepted'?1:0),0);
-    const rejected=end-accepted;
-    $('acceptedCount').textContent=accepted+' / '+end;
-    $('rejectCount').textContent=String(rejected);
-    let obs=null,cmd=null;
-    for(let i=end-1;i>=0 && (obs===null||cmd===null);i--){
-      const event=events[i],kind=(event.message_type||event.direction||'').toUpperCase();
-      if(kind.includes('OBS')||kind.includes('UP')){if(obs===null)obs=event}
-      if(kind.includes('CMD')||kind.includes('DOWN')){if(cmd===null)cmd=event}
-    }
-    setFrameStatus('obsStatus',obs?.status);setFrameStatus('cmdStatus',cmd?.status);
-    const latest=recent.length?recent[recent.length-1]:null;
-    $('lastRxClock').textContent=latest?'T+'+format(pickTime(latest),2,'s'):'—';
-  }
-  function scheduleFrame(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;updateAtTime(video.currentTime);if(!video.paused&&!video.ended)scheduleFrame()})}
-  async function loadRun(id){
-    if(!scenarios[id])return;
-    const current=++token; selected=id; currentData=null;selectedEventKey=null;
-    runButtons.forEach(b=>{const on=b.dataset.run===id;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
-    const s=scenarios[id],wasPlaying=!video.paused;
-    video.pause();video.src=s.video;video.load();
-    $('linkCondition').textContent=s.signal;
-    $('replayRunLabel').textContent=s.label;
-    $('eventsTotal').textContent='— EVENTS';
-    $('eventButtons').replaceChildren();
-    $('controllerState').textContent='—';
-    ['targetRange','targetBearing','cmdAge','appliedVx','headingNow','acceptedCount','rejectCount','lastRxClock'].forEach(k=>$(k).textContent='—');
-    setFrameStatus('obsStatus',null);setFrameStatus('cmdStatus',null);
-    $('headingPath').setAttribute('d','');
-    $('viewSplit').disabled=id!=='awgn-8db';
-    $('viewSplit').setAttribute('aria-pressed','false');
-    $('viewSplit').textContent=id==='awgn-8db'?'Show robot camera ↗':'Robot camera · 8 dB only';
-    updateStatus('Loading verified '+id+' trace…');
-    try{
-      let promise=cache.get(id);
-      if(!promise){
-        promise=fetch(s.data).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status+' for '+s.data);return r.json()});
-        cache.set(id,promise);
-      }
-      const loaded=await promise;
-      if(current!==token)return;
-      if(loaded.run_id!==id || !Array.isArray(loaded.events) || !Array.isArray(loaded.ticks) || !Array.isArray(loaded.video_clock?.frame_map))throw Error('Trace schema or run ID mismatch');
-      // Enforce source identity. No mixed-run telemetry is ever displayed.
-      const frames=loaded.video_clock.frame_map;
-      if(frames.length!==loaded.video_clock.frame_count)throw Error('Frame map is inconsistent');
-      currentData=loaded;
-      runSummary(id);drawHeading();updateAtTime(0);
-      if(wasPlaying){try{await video.play()}catch(_){/* browser gesture/autoplay restriction */}}
-    }catch(err){
-      if(current!==token)return;
-      cache.delete(id);currentData=null;
-      updateStatus('Unable to load this run: '+err.message+'. Serve website/ using a local HTTP server (not file://).','error');
-      const p=document.createElement('p');p.className='event-placeholder';p.textContent='No telemetry available for this run.';$('eventButtons').replaceChildren(p);
-    }
-  }
-  runButtons.forEach(b=>b.addEventListener('click',()=>loadRun(b.dataset.run)));
-  video.addEventListener('timeupdate',()=>updateAtTime(video.currentTime));
-  video.addEventListener('seeked',()=>updateAtTime(video.currentTime));
-  video.addEventListener('play',scheduleFrame);
-  video.addEventListener('pause',()=>{if(raf){cancelAnimationFrame(raf);raf=0}});
-  $('viewSplit').addEventListener('click',()=>{
-    if(selected!=='awgn-8db')return;
-    const current=video.currentTime,play=!video.paused;
-    const isSplit=$('viewSplit').getAttribute('aria-pressed')==='true';
-    const next=!isSplit;
+'use strict';
+const el=id=>document.getElementById(id);
+const video=el('replayVideo');
+const sources={
+  ideal:{video:'./assets/video/industrial-ideal.mp4',data:'./assets/data/ideal.json',label:'Ideal messages · no PHY',eb:'Ideal / no AWGN'},
+  noiseless:{video:'./assets/video/industrial-noiseless.mp4',data:'./assets/data/noiseless.json',label:'Noiseless QPSK · full wire',eb:'Noiseless QPSK'},
+  'awgn-8db':{video:'./assets/video/industrial-awgn-8db.mp4',data:'./assets/data/awgn-8db.json',label:'8 dB QPSK/AWGN · seed 303',eb:'8 dB AWGN'}
+};
+let active='awgn-8db',data=null,loadToken=0,videoLoop=0,selectedEvent=null,visibleEvent=null;
+const cache=new Map();
+const finite=x=>typeof x==='number'&&Number.isFinite(x);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const fixed=(n,d=2,s='')=>finite(n)?n.toFixed(d)+s:'—';
+const eventTime=e=>finite(e.rx_time_s)?e.rx_time_s:(finite(e.tx_time_s)?e.tx_time_s:0);
+const label=s=>s?String(s).replace(/_/g,' ').toUpperCase():'—';
+const getType=e=>{
+  const text=String(e.message_type||e.direction||'').toUpperCase();
+  return text.includes('OBS')||text.includes('UP')?'OBS':text.includes('CMD')||text.includes('DOWN')?'CMD':null;
+};
+const getTxTime=e=>finite(e.tx_time_s)?e.tx_time_s:eventTime(e);
+function setStatus(s,error=false){const e=el('traceStatus');e.textContent=s;e.className='status-note'+(error?' error':' ok');}
+function getFrame(t){
+  const frames=data?.video_clock?.frame_map;
+  if(!frames?.length)return null;
+  const fps=data.video_clock.fps||25;
+  return frames[clamp(Math.floor(Math.max(0,t)*fps+1e-8),0,frames.length-1)];
+}
+function eventsThrough(t){
+  const rows=data?.events||[];
+  let lo=0,hi=rows.length;
+  while(lo<hi){const mid=(lo+hi)>>>1;if(eventTime(rows[mid])<=t+1e-9)lo=mid+1;else hi=mid}
+  return lo;
+}
+function simToVideo(t){
+  const rows=data?.video_clock?.frame_map||[];
+  if(!rows.length)return t;
+  let lo=0,hi=rows.length;
+  while(lo<hi){const m=(lo+hi)>>>1;if(rows[m].sim_time_s<t)lo=m+1;else hi=m}
+  return rows[clamp(lo,0,rows.length-1)].video_time_s;
+}
+function observation(tick){
+ const a=tick?.controller_input,b=tick?.raw_observation;
+ return a?.valid?a:(b?.valid?b:a||b||null);
+}
+function commandVx(v){
+ if(!v||typeof v!=='object')return null;
+ if(finite(v.vx))return v.vx;
+ if(finite(v.vx_m_s))return v.vx_m_s;
+ return null;
+}
+function statusChip(lane,statusText){
+ const node=el(lane+'Lane');
+ node.classList.remove('accepted','rejected');
+ if(statusText==='accepted')node.classList.add('accepted');
+ else if(statusText)node.classList.add('rejected');
+ el(lane+'Status').textContent=statusText?label(statusText):'—';
+}
+function bitOutput(id,bits,errorIndices=[]){
+ const node=el(id);
+ node.replaceChildren();
+ if(typeof bits!=='string'||!/^[01]{96}$/.test(bits)){node.textContent='No 96-bit data recorded';return}
+ const indices=new Set(errorIndices),fragment=document.createDocumentFragment();
+ for(let i=0;i<bits.length;i++){
+  const c=indices.has(i)?document.createElement('mark'):document.createElement('span');
+  c.textContent=bits[i];
+  fragment.appendChild(c);
+  if(i===15||i===27||i===79){const spacer=document.createTextNode(' ');fragment.appendChild(spacer)}
+ }
+ node.appendChild(fragment);
+}
+function showPacket(e){
+ if(!e){el('packetDirection').textContent='—';el('packetResult').textContent='—';el('packetResult').className='';el('packetTime').textContent='—';bitOutput('txBits',null);bitOutput('rxBits',null);el('bitErrorCount').textContent='—';el('packetInterpretation').textContent='Waiting for the first recorded frame.';return}
+ const tx=e.tx_bits,rx=e.rx_bits,wrong=[];
+ if(typeof tx==='string'&&typeof rx==='string'&&tx.length===rx.length){for(let i=0;i<tx.length;i++)if(tx[i]!==rx[i])wrong.push(i)}
+ el('packetDirection').textContent=(getType(e)||'FRAME')+' · '+(e.direction||'LINK');
+ el('packetResult').textContent=label(e.status);
+ el('packetResult').className=e.status==='accepted'?'ok':'error';
+ el('packetTime').textContent='RX '+fixed(eventTime(e),3,' s');
+ bitOutput('txBits',tx);
+ bitOutput('rxBits',rx,wrong);
+ el('bitErrorCount').textContent=wrong.length+' bit difference'+(wrong.length===1?'':'s');
+ let reason=e.status==='accepted'?'Receiver accepted frame; message is available to the downstream logic.':'Receiver rejected frame; its semantic payload is not applied.';
+ if(wrong.length)reason+=' Red cells indicate differing TX/RX bits.';
+ if(finite(e.tx_time_s)&&finite(e.rx_time_s))reason+=' Recorded TX→RX span: '+fixed((e.rx_time_s-e.tx_time_s)*1000,0,' ms')+'.';
+ el('packetInterpretation').textContent=reason;
+}
+function movePacket(lane,e,simTime){
+ const ball=el(lane+'Packet');
+ if(!e){ball.style.opacity='.08';ball.style.left='0%';return}
+ // The visual emphasis persists for 100 ms so frames can be inspected at 25 fps.
+ // This is a highlight, NOT a claim about actual over-air packet duration.
+ const age=simTime-eventTime(e),phase=clamp(1-age/.1,0,1);
+ ball.style.opacity=age>=0&&age<=.1?'1':'.14';
+ ball.style.left=(lane==='uplink'?(70+25*phase):(5+25*(1-phase)))+'%';
+}
+function update(t){
+ el('frameClock').textContent='T + '+fixed(t,2,' s');
+ if(!data)return;
+ const mapped=getFrame(t);
+ if(!mapped)return;
+ const tick=data.ticks[clamp(mapped.trace_index||0,0,data.ticks.length-1)]||{};
+ const sim=finite(mapped.sim_time_s)?mapped.sim_time_s:t;
+ const obs=observation(tick);
+ el('controllerState').textContent=label(tick.controller_state);
+ el('targetRange').textContent=obs?.valid&&finite(obs.range_m)?fixed(obs.range_m,2,' m'):'—';
+ el('robotHeading').textContent=finite(tick.yaw_rad)?fixed(tick.yaw_rad*180/Math.PI,1,'°'):'—';
+ el('appliedVx').textContent=fixed(commandVx(tick.applied_cmd),3,' m/s');
+ el('cmdAge').textContent=fixed(tick.command_age_ms,0,' ms');
+ const events=data.events;
+ const n=eventsThrough(sim);
+ let obsEvent=null,cmdEvent=null,received=null,accepted=0;
+ for(let i=0;i<n;i++){const e=events[i];if(e.status==='accepted')accepted++}
+ for(let i=n-1;i>=0;i--){const e=events[i];if(!received)received=e;const kind=getType(e);if(kind==='OBS'&&!obsEvent)obsEvent=e;if(kind==='CMD'&&!cmdEvent)cmdEvent=e;if(received&&obsEvent&&cmdEvent)break}
+ el('acceptedCount').textContent=accepted+' / '+n;
+ el('rejectedCount').textContent=String(n-accepted);
+ statusChip('uplink',obsEvent?.status);
+ statusChip('downlink',cmdEvent?.status);
+ movePacket('uplink',obsEvent,sim);movePacket('downlink',cmdEvent,sim);
+ if(received!==visibleEvent){showPacket(received);visibleEvent=received}
+}
+function rebuildEvents(){
+ const list=el('eventButtons');list.replaceChildren();
+ const bad=data.events.map((e,i)=>({...e,_index:i})).filter(e=>e.status!=='accepted');
+ el('eventsTotal').textContent=bad.length+' rejected frames';
+ if(!bad.length){const note=document.createElement('span');note.className='empty';note.textContent='No rejected frames in this run ('+data.events.length+' accepted).';list.appendChild(note);return}
+ bad.forEach(e=>{
+  const b=document.createElement('button');b.type='button';b.className='event-chip';
+  const t=document.createElement('span');t.textContent='T+'+fixed(eventTime(e),2,'s');
+  const typ=document.createElement('span');typ.textContent=getType(e)||'LINK';
+  const reason=document.createElement('span');reason.textContent=label(e.status);
+  b.append(t,typ,reason);
+  b.setAttribute('aria-label','Seek to '+(getType(e)||'frame')+' '+label(e.status)+' at '+fixed(eventTime(e),2)+' seconds');
+  b.addEventListener('click',()=>{
+    if(!data)return;
     video.pause();
-    video.src=next?'./assets/video/industrial-awgn-8db-split.mp4':scenarios[selected].video;
-    video.load();
-    video.addEventListener('loadedmetadata',()=>{video.currentTime=clamp(current,0,Math.max(0,(video.duration||26.24)-.05));if(play)video.play().catch(()=>{})},{once:true});
-    $('viewSplit').setAttribute('aria-pressed',String(next));
-    $('viewSplit').textContent=next?'Use third-person ↙':'Show robot camera ↗';
+    const target=simToVideo(eventTime(e));
+    if(finite(target))video.currentTime=clamp(target,0,Math.max(0,(video.duration||27)-.04));
+    update(video.currentTime);
+    selectedEvent=e._index;
+    for(const other of list.children)other.classList.remove('active');
+    b.classList.add('active');
+    // The inspector directly shows the selected reject, even if the frame
+    // maps just before a 10/20 ms RX event boundary.
+    showPacket(e);visibleEvent=null;
   });
-  // The hero is muted decorative footage; respect reduced-motion preferences.
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){const hero=$('heroVideo');hero.pause();hero.removeAttribute('autoplay')}
-  const progress=$('readingProgress');let ticking=false;
-  window.addEventListener('scroll',()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{const available=document.documentElement.scrollHeight-window.innerHeight;progress.style.width=(available>0?clamp(window.scrollY/available*100,0,100):0).toFixed(1)+'%';ticking=false})},{passive:true});
-  loadRun('awgn-8db');
+  list.appendChild(b);
+ });
+}
+function loop(){if(videoLoop)return;videoLoop=requestAnimationFrame(()=>{videoLoop=0;update(video.currentTime);if(!video.paused&&!video.ended)loop()})}
+async function selectRun(id){
+ if(!sources[id])return;
+ const k=++loadToken,wasPlaying=!video.paused;
+ active=id;data=null;visibleEvent=null;selectedEvent=null;
+ document.querySelectorAll('[data-run]').forEach(b=>{const on=b.dataset.run===id;b.classList.toggle('active',on);b.setAttribute('aria-pressed',on?'true':'false')});
+ const source=sources[id];
+ el('linkCondition').textContent=source.eb;
+ el('acceptedCount').textContent=el('rejectedCount').textContent=el('cmdAge').textContent='—';
+ el('controllerState').textContent=el('targetRange').textContent=el('robotHeading').textContent=el('appliedVx').textContent='—';
+ statusChip('uplink',null);statusChip('downlink',null);showPacket(null);
+ el('eventButtons').textContent='Loading recorded events…';
+ el('eventsTotal').textContent='—';
+ el('toggleCamera').disabled=id!=='awgn-8db';
+ el('toggleCamera').textContent=id==='awgn-8db'?'Robot camera split view ↗':'Split view: 8 dB only';
+ el('toggleCamera').setAttribute('aria-pressed','false');
+ video.pause();video.src=source.video;video.load();
+ el('traceStatus').textContent='Loading matching trace…';
+ try{
+  if(!cache.has(id))cache.set(id,fetch(source.data).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}));
+  const obj=await cache.get(id);
+  if(k!==loadToken)return;
+  if(obj.run_id!==id||!Array.isArray(obj.events)||!Array.isArray(obj.ticks)||!Array.isArray(obj.video_clock?.frame_map)||obj.video_clock.frame_map.length!==obj.video_clock.frame_count)throw Error('Trace/run mismatch');
+  if(id==='awgn-8db' && obj.events.filter(e=>e.status!=='accepted').length!==11)throw Error('AWGN trace reject count mismatch');
+  // Source exporter records events by link arrival order; sort only for
+  // indexing the UI, without changing or dropping any recorded frame.
+  obj.events.sort((a,b)=>eventTime(a)-eventTime(b));
+  data=obj;rebuildEvents();update(0);
+  setStatus('Loaded '+obj.ticks.length+' robot ticks and '+obj.events.length+' real link events. Replay is ready.');
+  if(wasPlaying)video.play().catch(()=>{});
+ }catch(err){
+  if(k!==loadToken)return;
+  cache.delete(id);setStatus('Trace load failed: '+err.message+'. Open this page over HTTP, not file://.',true);
+ }
+}
+document.querySelectorAll('[data-run]').forEach(b=>b.addEventListener('click',()=>selectRun(b.dataset.run)));
+video.addEventListener('timeupdate',()=>update(video.currentTime));
+video.addEventListener('seeked',()=>update(video.currentTime));
+video.addEventListener('play',loop);
+video.addEventListener('pause',()=>{if(videoLoop){cancelAnimationFrame(videoLoop);videoLoop=0}});
+el('toggleCamera').addEventListener('click',()=>{
+ if(active!=='awgn-8db')return;
+ const t=video.currentTime,play=!video.paused;
+ const split=el('toggleCamera').getAttribute('aria-pressed')==='true',next=!split;
+ video.pause();video.src=next?'./assets/video/industrial-awgn-8db-split.mp4':sources[active].video;video.load();
+ video.addEventListener('loadedmetadata',()=>{video.currentTime=clamp(t,0,Math.max(0,(video.duration||26.24)-.04));if(play)video.play().catch(()=>{})},{once:true});
+ el('toggleCamera').setAttribute('aria-pressed',String(next));
+ el('toggleCamera').textContent=next?'Third-person view ↙':'Robot camera split view ↗';
+});
+selectRun('awgn-8db');
 })();
