@@ -1,0 +1,10 @@
+{
+  "ebn0_db": 8.0,
+  "frames_per_seed_per_type": 2000,
+  "seeds": [20261105, 20261106, 20261107, 20261108, 20261109],
+  "rrc_alpha": 0.35,
+  "rrc_span_symbols": 10,
+  "samples_per_symbol": 16,
+  "simulated_receive_time_s": 0.05,
+  "message_generation": "same field distributions as P2, generated in this diagnostic per-seed stream"
+}

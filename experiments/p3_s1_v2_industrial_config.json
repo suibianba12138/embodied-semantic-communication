@@ -1,0 +1,155 @@
+{
+  "scenario_id": "B_-30deg_seed0",
+  "target_color": "red",
+  "master_seed": 303,
+  "layout_randomization": {"seed": 20261105, "translation_xy_m": 0.42, "yaw_deg": 38.0},
+  "expect_initial_target_visible": false,
+  "reference_path_config": "experiments/p3_s1_v_config_v3.json",
+  "render": {
+    "width": 1280,
+    "height": 720,
+    "fps": 25,
+    "camera_views": [
+      {"name": "hero_wide", "lookat": [0.35, 0.05, 0.86], "distance": 9.4, "azimuth": 125, "elevation": -22},
+      {"name": "front_three_quarter", "lookat": [0.25, 0.05, 0.88], "distance": 9.2, "azimuth": 155, "elevation": -24},
+      {"name": "opposite_three_quarter", "lookat": [0.25, 0.05, 0.88], "distance": 9.2, "azimuth": 65, "elevation": -24},
+      {"name": "raised_overview", "lookat": [0.25, 0.05, 0.60], "distance": 9.6, "azimuth": 110, "elevation": -38}
+    ]
+  },
+  "palette": {
+    "floor_rgba": [0.36, 0.39, 0.39, 1.0],
+    "floor_texture_rgb": [0.38, 0.41, 0.40],
+    "floor_texture_rgb2": [0.36, 0.39, 0.38],
+    "floor_mark_rgb": [0.36, 0.39, 0.38],
+    "floor_roughness": 0.96
+  },
+  "materials": {
+    "lab_blue_steel": {"rgba": [0.26, 0.36, 0.43, 1], "metallic": 0.48, "roughness": 0.42, "specular": 0.35},
+    "lab_dark_steel": {"rgba": [0.12, 0.19, 0.23, 1], "metallic": 0.38, "roughness": 0.50, "specular": 0.30},
+    "lab_shelf_deck": {"rgba": [0.42, 0.50, 0.54, 1], "metallic": 0.32, "roughness": 0.60},
+    "lab_teal_cabinet": {"rgba": [0.08, 0.31, 0.30, 1], "metallic": 0.20, "roughness": 0.48},
+    "lab_panel": {"rgba": [0.12, 0.17, 0.18, 1], "metallic": 0.18, "roughness": 0.42},
+    "lab_screen": {"rgba": [0.12, 0.43, 0.51, 1], "metallic": 0.06, "roughness": 0.32, "specular": 0.48},
+    "lab_indicator_green": {"rgba": [0.08, 0.68, 0.31, 1], "emission": 0.12},
+    "lab_indicator_amber": {"rgba": [0.96, 0.56, 0.05, 1], "emission": 0.08},
+    "lab_carton_kraft": {"rgba": [0.46, 0.38, 0.28, 1], "roughness": 0.95},
+    "lab_carton_light": {"rgba": [0.64, 0.56, 0.40, 1], "roughness": 0.95},
+    "lab_carton_tape": {"rgba": [0.76, 0.65, 0.25, 1], "roughness": 0.82},
+    "lab_safety_yellow": {"rgba": [0.98, 0.63, 0.035, 1], "metallic": 0.08, "roughness": 0.48},
+    "lab_safety_black": {"rgba": [0.055, 0.067, 0.073, 1], "metallic": 0.12, "roughness": 0.55},
+    "lab_drum_blue": {"rgba": [0.06, 0.27, 0.60, 1], "metallic": 0.28, "roughness": 0.39},
+    "lab_drum_silver": {"rgba": [0.57, 0.64, 0.66, 1], "metallic": 0.62, "roughness": 0.30},
+    "lab_bench_white": {"rgba": [0.77, 0.80, 0.78, 1], "metallic": 0.16, "roughness": 0.57},
+    "lab_bench_graphite": {"rgba": [0.20, 0.25, 0.27, 1], "metallic": 0.22, "roughness": 0.50},
+    "lab_wall": {"rgba": [0.56, 0.61, 0.61, 1], "metallic": 0.06, "roughness": 0.90},
+    "lab_window": {"rgba": [0.20, 0.42, 0.49, 1], "metallic": 0.10, "roughness": 0.28, "specular": 0.5},
+    "lab_floor_yellow": {"rgba": [0.98, 0.67, 0.06, 1], "roughness": 0.90},
+    "lab_floor_white": {"rgba": [0.79, 0.82, 0.78, 1], "roughness": 0.90}
+  },
+  "objects": [
+    {
+      "name": "rack_blue_gray",
+      "label": "Multi-level metal rack",
+      "origin_xyz": [-2.30, 1.55, 0.0],
+      "yaw_deg": -22,
+      "randomize_layout": true,
+      "parts": [
+        {"name": "upright_left", "shape": "box", "offset_xyz": [-0.70, 0, 0.96], "size": [0.055, 0.055, 0.96], "rgba": [0.26, 0.36, 0.43, 1], "material": "lab_blue_steel", "collidable": true},
+        {"name": "upright_right", "shape": "box", "offset_xyz": [0.70, 0, 0.96], "size": [0.055, 0.055, 0.96], "rgba": [0.26, 0.36, 0.43, 1], "material": "lab_blue_steel", "collidable": true},
+        {"name": "rear_brace", "shape": "box", "offset_xyz": [0, 0.30, 0.96], "size": [0.70, 0.035, 0.055], "rgba": [0.12, 0.19, 0.23, 1], "material": "lab_dark_steel", "collidable": true},
+        {"name": "shelf_lower", "shape": "box", "offset_xyz": [0, -0.02, 0.43], "size": [0.79, 0.39, 0.055], "rgba": [0.42, 0.50, 0.54, 1], "material": "lab_shelf_deck", "collidable": true},
+        {"name": "shelf_middle", "shape": "box", "offset_xyz": [0, -0.02, 1.04], "size": [0.79, 0.39, 0.055], "rgba": [0.42, 0.50, 0.54, 1], "material": "lab_shelf_deck", "collidable": true},
+        {"name": "shelf_upper", "shape": "box", "offset_xyz": [0, -0.02, 1.65], "size": [0.79, 0.39, 0.055], "rgba": [0.42, 0.50, 0.54, 1], "material": "lab_shelf_deck", "collidable": true},
+        {"name": "front_lip_lower", "shape": "box", "offset_xyz": [0, -0.405, 0.50], "size": [0.77, 0.018, 0.035], "rgba": [0.98, 0.63, 0.035, 1], "material": "lab_safety_yellow", "collidable": false},
+        {"name": "front_lip_middle", "shape": "box", "offset_xyz": [0, -0.405, 1.11], "size": [0.77, 0.018, 0.035], "rgba": [0.98, 0.63, 0.035, 1], "material": "lab_safety_yellow", "collidable": false}
+      ]
+    },
+    {
+      "name": "control_cabinet_teal",
+      "label": "Industrial control cabinet",
+      "origin_xyz": [0.85, 2.43, 0.0],
+      "yaw_deg": 21,
+      "randomize_layout": true,
+      "parts": [
+        {"name": "cabinet_body", "shape": "box", "offset_xyz": [0, 0, 0.82], "size": [0.43, 0.30, 0.82], "rgba": [0.08, 0.31, 0.30, 1], "material": "lab_teal_cabinet", "collidable": true},
+        {"name": "door_panel", "shape": "box", "offset_xyz": [0, -0.307, 1.02], "size": [0.32, 0.012, 0.42], "rgba": [0.12, 0.17, 0.18, 1], "material": "lab_panel", "collidable": false},
+        {"name": "screen", "shape": "box", "offset_xyz": [-0.08, -0.324, 1.14], "size": [0.16, 0.006, 0.085], "rgba": [0.12, 0.43, 0.51, 1], "material": "lab_screen", "collidable": false},
+        {"name": "status_green", "shape": "sphere", "offset_xyz": [0.18, -0.326, 1.18], "size": [0.035, 0.035, 0.035], "rgba": [0.08, 0.68, 0.31, 1], "material": "lab_indicator_green", "collidable": false},
+        {"name": "status_amber", "shape": "sphere", "offset_xyz": [0.18, -0.326, 1.06], "size": [0.028, 0.028, 0.028], "rgba": [0.96, 0.56, 0.05, 1], "material": "lab_indicator_amber", "collidable": false},
+        {"name": "handle", "shape": "box", "offset_xyz": [0.27, -0.334, 0.88], "size": [0.025, 0.015, 0.16], "rgba": [0.57, 0.64, 0.66, 1], "material": "lab_drum_silver", "collidable": false}
+      ]
+    },
+    {
+      "name": "package_stack",
+      "label": "Mixed logistics cartons",
+      "origin_xyz": [-2.64, -1.38, 0.0],
+      "yaw_deg": -9,
+      "randomize_layout": true,
+      "parts": [
+        {"name": "carton_large", "shape": "box", "offset_xyz": [-0.31, 0, 0.38], "size": [0.36, 0.31, 0.38], "rgba": [0.46, 0.38, 0.28, 1], "material": "lab_carton_kraft", "collidable": true},
+        {"name": "carton_small", "shape": "box", "offset_xyz": [0.37, 0.02, 0.27], "size": [0.28, 0.28, 0.27], "rgba": [0.64, 0.56, 0.40, 1], "material": "lab_carton_light", "collidable": true},
+        {"name": "carton_top", "shape": "box", "offset_xyz": [0.05, 0.06, 0.94], "size": [0.30, 0.27, 0.24], "rgba": [0.52, 0.43, 0.31, 1], "material": "lab_carton_kraft", "collidable": true},
+        {"name": "top_tape", "shape": "box", "offset_xyz": [0.05, 0.06, 1.185], "size": [0.035, 0.265, 0.003], "rgba": [0.76, 0.65, 0.25, 1], "material": "lab_carton_tape", "collidable": false},
+        {"name": "label_patch", "shape": "box", "offset_xyz": [-0.31, -0.312, 0.40], "size": [0.14, 0.006, 0.095], "rgba": [0.79, 0.82, 0.78, 1], "material": "lab_floor_white", "collidable": false}
+      ]
+    },
+    {
+      "name": "yellow_black_guard_rail",
+      "label": "Safety guard rail",
+      "origin_xyz": [2.95, 0.86, 0.0],
+      "yaw_deg": 29,
+      "randomize_layout": true,
+      "parts": [
+        {"name": "post_left", "shape": "box", "offset_xyz": [-1.05, 0, 0.55], "size": [0.07, 0.07, 0.55], "rgba": [0.98, 0.63, 0.035, 1], "material": "lab_safety_yellow", "collidable": true},
+        {"name": "post_mid", "shape": "box", "offset_xyz": [0, 0, 0.55], "size": [0.07, 0.07, 0.55], "rgba": [0.98, 0.63, 0.035, 1], "material": "lab_safety_yellow", "collidable": true},
+        {"name": "post_right", "shape": "box", "offset_xyz": [1.05, 0, 0.55], "size": [0.07, 0.07, 0.55], "rgba": [0.98, 0.63, 0.035, 1], "material": "lab_safety_yellow", "collidable": true},
+        {"name": "upper_beam", "shape": "box", "offset_xyz": [0, 0, 0.94], "size": [1.12, 0.055, 0.10], "rgba": [0.98, 0.63, 0.035, 1], "material": "lab_safety_yellow", "collidable": true},
+        {"name": "black_warning_band", "shape": "box", "offset_xyz": [0, -0.058, 0.96], "size": [0.86, 0.006, 0.055], "rgba": [0.055, 0.067, 0.073, 1], "material": "lab_safety_black", "collidable": false},
+        {"name": "lower_beam", "shape": "box", "offset_xyz": [0, 0, 0.26], "size": [1.10, 0.045, 0.05], "rgba": [0.98, 0.63, 0.035, 1], "material": "lab_safety_yellow", "collidable": true}
+      ]
+    },
+    {
+      "name": "industrial_drum_pair",
+      "label": "Blue and galvanized industrial drums",
+      "origin_xyz": [2.35, -2.13, 0.0],
+      "yaw_deg": -21,
+      "randomize_layout": true,
+      "parts": [
+        {"name": "blue_drum", "shape": "cylinder", "offset_xyz": [-0.34, 0, 0.48], "size": [0.28, 0.48, 0], "rgba": [0.06, 0.27, 0.60, 1], "material": "lab_drum_blue", "collidable": true},
+        {"name": "silver_drum", "shape": "cylinder", "offset_xyz": [0.36, 0.04, 0.39], "size": [0.25, 0.39, 0], "rgba": [0.57, 0.64, 0.66, 1], "material": "lab_drum_silver", "collidable": true},
+        {"name": "blue_rim_top", "shape": "cylinder", "offset_xyz": [-0.34, 0, 0.91], "size": [0.286, 0.035, 0], "rgba": [0.57, 0.64, 0.66, 1], "material": "lab_drum_silver", "collidable": false},
+        {"name": "silver_rim_top", "shape": "cylinder", "offset_xyz": [0.36, 0.04, 0.75], "size": [0.256, 0.028, 0], "rgba": [0.26, 0.36, 0.43, 1], "material": "lab_blue_steel", "collidable": false},
+        {"name": "blue_hoop", "shape": "cylinder", "offset_xyz": [-0.34, 0, 0.28], "size": [0.284, 0.018, 0], "rgba": [0.57, 0.64, 0.66, 1], "material": "lab_drum_silver", "collidable": false}
+      ]
+    },
+    {
+      "name": "lab_workbench",
+      "label": "Laboratory workbench and instrument",
+      "origin_xyz": [-2.72, 0.12, 0.0],
+      "yaw_deg": 17,
+      "randomize_layout": true,
+      "parts": [
+        {"name": "top", "shape": "box", "offset_xyz": [0, 0, 0.93], "size": [0.88, 0.43, 0.075], "rgba": [0.77, 0.80, 0.78, 1], "material": "lab_bench_white", "collidable": true},
+        {"name": "leg_front_left", "shape": "box", "offset_xyz": [-0.73, -0.32, 0.45], "size": [0.055, 0.055, 0.45], "rgba": [0.20, 0.25, 0.27, 1], "material": "lab_bench_graphite", "collidable": true},
+        {"name": "leg_front_right", "shape": "box", "offset_xyz": [0.73, -0.32, 0.45], "size": [0.055, 0.055, 0.45], "rgba": [0.20, 0.25, 0.27, 1], "material": "lab_bench_graphite", "collidable": true},
+        {"name": "leg_back_left", "shape": "box", "offset_xyz": [-0.73, 0.32, 0.45], "size": [0.055, 0.055, 0.45], "rgba": [0.20, 0.25, 0.27, 1], "material": "lab_bench_graphite", "collidable": true},
+        {"name": "leg_back_right", "shape": "box", "offset_xyz": [0.73, 0.32, 0.45], "size": [0.055, 0.055, 0.45], "rgba": [0.20, 0.25, 0.27, 1], "material": "lab_bench_graphite", "collidable": true},
+        {"name": "instrument_body", "shape": "box", "offset_xyz": [-0.12, 0.03, 1.20], "size": [0.30, 0.23, 0.19], "rgba": [0.12, 0.19, 0.23, 1], "material": "lab_dark_steel", "collidable": false},
+        {"name": "instrument_screen", "shape": "box", "offset_xyz": [-0.12, -0.205, 1.22], "size": [0.17, 0.008, 0.10], "rgba": [0.12, 0.43, 0.51, 1], "material": "lab_screen", "collidable": false},
+        {"name": "instrument_indicator", "shape": "sphere", "offset_xyz": [0.17, -0.20, 1.24], "size": [0.025, 0.025, 0.025], "rgba": [0.08, 0.68, 0.31, 1], "material": "lab_indicator_green", "collidable": false}
+      ]
+    },
+    {
+      "name": "background_lab_wall",
+      "label": "Non-colliding laboratory backdrop",
+      "origin_xyz": [0.0, 3.55, 0.0],
+      "parts": [
+        {"name": "wall_panel", "shape": "box", "offset_xyz": [0, 0, 1.55], "size": [4.2, 0.10, 1.55], "rgba": [0.56, 0.61, 0.61, 1], "material": "lab_wall", "collidable": false},
+        {"name": "window_left", "shape": "box", "offset_xyz": [-2.72, -0.108, 1.72], "size": [0.56, 0.008, 0.34], "rgba": [0.20, 0.42, 0.49, 1], "material": "lab_window", "collidable": false},
+        {"name": "window_right", "shape": "box", "offset_xyz": [1.74, -0.108, 1.94], "size": [0.94, 0.008, 0.47], "rgba": [0.20, 0.42, 0.49, 1], "material": "lab_window", "collidable": false},
+        {"name": "upper_header", "shape": "box", "offset_xyz": [0, -0.12, 2.75], "size": [4.0, 0.025, 0.08], "rgba": [0.26, 0.36, 0.43, 1], "material": "lab_blue_steel", "collidable": false}
+      ]
+    }
+  ],
+  "channel": {"mode": "fixed", "ebn0_db": 8.0, "dynamic_snr": false}
+}

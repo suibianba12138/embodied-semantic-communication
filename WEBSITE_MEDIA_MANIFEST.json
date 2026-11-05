@@ -1,0 +1,412 @@
+{
+  "manifest_version": 1,
+  "purpose": "Local P4-A website media preparation; not staged or published by this script.",
+  "formal_run_root": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105",
+  "runs": {
+    "ideal": {
+      "stage": "s1-1",
+      "video_export": "website/assets/video/industrial-ideal.mp4",
+      "data_export": "website/assets/data/ideal.json"
+    },
+    "noiseless": {
+      "stage": "s1-2",
+      "video_export": "website/assets/video/industrial-noiseless.mp4",
+      "data_export": "website/assets/data/noiseless.json"
+    },
+    "awgn-8db": {
+      "stage": "s1-3",
+      "video_export": "website/assets/video/industrial-awgn-8db.mp4",
+      "data_export": "website/assets/data/awgn-8db.json"
+    }
+  },
+  "files": [
+    {
+      "role": "run_data",
+      "run_id": "ideal",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-1/result_wideview.json",
+      "source_sha256": "4512fb5c166d5f2ae4ed4627eefad1621cb4c85636b834a3869a4eaecb69df32",
+      "source_bytes": 3834337,
+      "export": "website/assets/data/ideal.json",
+      "export_sha256": "578bed9912df85d79368c3e8d4c096d89b14226a29960dd02588c9fe930d11b7",
+      "export_bytes": 1427475,
+      "event_count": 527,
+      "reject_count": 0,
+      "rejects_by_status": {
+        "OBS": {},
+        "CMD": {}
+      },
+      "video_export": "website/assets/video/industrial-ideal.mp4",
+      "video_export_sha256": "c7fbaea4dd75f50e0cf321ca847d8ecbe4de8b5acbff7b1c8f263cdc06e94cff",
+      "source_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 658,
+        "duration_s": 26.32,
+        "audio_streams": 0
+      },
+      "export_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 658,
+        "duration_s": 26.32,
+        "audio_streams": 0
+      }
+    },
+    {
+      "role": "video",
+      "run_id": "ideal",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-1/s1-1_B_-30deg_seed0_captioned.mp4",
+      "source_sha256": "844aeef38fd82f60e27dd83a1ac0816039097aa3e530f2bada8fa8dafa3e2ac7",
+      "source_bytes": 1096233,
+      "export": "website/assets/video/industrial-ideal.mp4",
+      "export_sha256": "c7fbaea4dd75f50e0cf321ca847d8ecbe4de8b5acbff7b1c8f263cdc06e94cff",
+      "export_bytes": 809330,
+      "source_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 658,
+        "duration_s": 26.32,
+        "audio_streams": 0
+      },
+      "export_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 658,
+        "duration_s": 26.32,
+        "audio_streams": 0
+      },
+      "compression": {
+        "codec": "libx264",
+        "preset": "medium",
+        "crf": 23,
+        "pixel_format": "yuv420p",
+        "audio": "removed; source has no audio"
+      },
+      "overlay": "burned from the same run trace"
+    },
+    {
+      "role": "run_data",
+      "run_id": "noiseless",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-2/result_wideview.json",
+      "source_sha256": "773fff0c7db441d397dbb3da85c14d938ac677320cc785c7a620709042774203",
+      "source_bytes": 3992388,
+      "export": "website/assets/data/noiseless.json",
+      "export_sha256": "7ec88d98d427ed2fdd21541aa68db630b7cba102c4ac1b7439772d88e32125a8",
+      "export_bytes": 1484543,
+      "event_count": 527,
+      "reject_count": 0,
+      "rejects_by_status": {
+        "OBS": {},
+        "CMD": {}
+      },
+      "video_export": "website/assets/video/industrial-noiseless.mp4",
+      "video_export_sha256": "67181c2fd91d9c77dfdcb19a1a2d6e34c366b655e47da0fada519a5cfe28eae0",
+      "source_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 658,
+        "duration_s": 26.32,
+        "audio_streams": 0
+      },
+      "export_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 658,
+        "duration_s": 26.32,
+        "audio_streams": 0
+      }
+    },
+    {
+      "role": "video",
+      "run_id": "noiseless",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-2/s1-2_B_-30deg_seed0_captioned.mp4",
+      "source_sha256": "786eb29e81829c96f208222d60a77a98732e7b3e8614515108f1320706a0d688",
+      "source_bytes": 1094782,
+      "export": "website/assets/video/industrial-noiseless.mp4",
+      "export_sha256": "67181c2fd91d9c77dfdcb19a1a2d6e34c366b655e47da0fada519a5cfe28eae0",
+      "export_bytes": 811049,
+      "source_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 658,
+        "duration_s": 26.32,
+        "audio_streams": 0
+      },
+      "export_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 658,
+        "duration_s": 26.32,
+        "audio_streams": 0
+      },
+      "compression": {
+        "codec": "libx264",
+        "preset": "medium",
+        "crf": 23,
+        "pixel_format": "yuv420p",
+        "audio": "removed; source has no audio"
+      },
+      "overlay": "burned from the same run trace"
+    },
+    {
+      "role": "run_data",
+      "run_id": "awgn-8db",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-3/result_wideview.json",
+      "source_sha256": "ffe653697f5c13ae242fd94e589762743609bf6215eb5d418e61ebeea28d18c2",
+      "source_bytes": 3975415,
+      "export": "website/assets/data/awgn-8db.json",
+      "export_sha256": "89f93e6f0fb1e58e943f588e77e94e72fe9496d853d4fc8c5a827f82a53b9282",
+      "export_bytes": 1478082,
+      "event_count": 525,
+      "reject_count": 11,
+      "rejects_by_status": {
+        "OBS": {
+          "crc_reject": 4,
+          "preamble_reject": 2
+        },
+        "CMD": {
+          "crc_reject": 3,
+          "preamble_reject": 2
+        }
+      },
+      "video_export": "website/assets/video/industrial-awgn-8db.mp4",
+      "video_export_sha256": "a896b141533be0fc051cef7516771730538685902e03fc53edce9a3f6ebcbe21",
+      "source_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 656,
+        "duration_s": 26.24,
+        "audio_streams": 0
+      },
+      "export_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 656,
+        "duration_s": 26.24,
+        "audio_streams": 0
+      }
+    },
+    {
+      "role": "video",
+      "run_id": "awgn-8db",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-3/s1-3_B_-30deg_seed0_captioned.mp4",
+      "source_sha256": "8a5769769decf0fa5aa922a89d9b3b66b3be580964e4e7a5a34142318ca95ba3",
+      "source_bytes": 1106969,
+      "export": "website/assets/video/industrial-awgn-8db.mp4",
+      "export_sha256": "a896b141533be0fc051cef7516771730538685902e03fc53edce9a3f6ebcbe21",
+      "export_bytes": 820921,
+      "source_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 656,
+        "duration_s": 26.24,
+        "audio_streams": 0
+      },
+      "export_media": {
+        "codec": "h264",
+        "width": 1280,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 656,
+        "duration_s": 26.24,
+        "audio_streams": 0
+      },
+      "compression": {
+        "codec": "libx264",
+        "preset": "medium",
+        "crf": 23,
+        "pixel_format": "yuv420p",
+        "audio": "removed; source has no audio"
+      },
+      "overlay": "burned from the same run trace"
+    },
+    {
+      "role": "video",
+      "run_id": "awgn-8db",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-3/s1-3_B_-30deg_seed0_split_view.mp4",
+      "source_sha256": "8c2d1e0d634249371bbda6c6f402471550139306eb70798e1ea2876c9bdfba4c",
+      "source_bytes": 1517741,
+      "export": "website/assets/video/industrial-awgn-8db-split.mp4",
+      "export_sha256": "7647b3c65cec7c4cfd7d7d5d639407854a14501916543cc8f74d1b77bcab4b3a",
+      "export_bytes": 1150415,
+      "source_media": {
+        "codec": "h264",
+        "width": 1784,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 656,
+        "duration_s": 26.24,
+        "audio_streams": 0
+      },
+      "export_media": {
+        "codec": "h264",
+        "width": 1784,
+        "height": 720,
+        "fps": 25.0,
+        "frame_count": 656,
+        "duration_s": 26.24,
+        "audio_streams": 0
+      },
+      "compression": {
+        "codec": "libx264",
+        "preset": "medium",
+        "crf": 23,
+        "pixel_format": "yuv420p",
+        "audio": "removed; source has no audio"
+      },
+      "overlay": "burned from the same 8 dB run trace; synchronized first-person inset"
+    },
+    {
+      "role": "image",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-0/scene_overview.png",
+      "source_sha256": "927b15c140cdfe3a63ad1c35171362446b75905a8860a4e18fc6cd7f51195fa5",
+      "source_bytes": 254760,
+      "export": "website/assets/img/industrial-overview.png",
+      "export_sha256": "927b15c140cdfe3a63ad1c35171362446b75905a8860a4e18fc6cd7f51195fa5",
+      "export_bytes": 254760,
+      "processing": "byte-identical PNG copy; no pixel or curve changes",
+      "media": {
+        "format": "PNG",
+        "width": 1280,
+        "height": 720,
+        "mode": "RGB"
+      }
+    },
+    {
+      "role": "image",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-0/view_front_three_quarter.png",
+      "source_sha256": "c8b35697ecddb281e102a84b6900ab8797afc7375461ea8c3b87c55bf56e1482",
+      "source_bytes": 250604,
+      "export": "website/assets/img/industrial-front.png",
+      "export_sha256": "c8b35697ecddb281e102a84b6900ab8797afc7375461ea8c3b87c55bf56e1482",
+      "export_bytes": 250604,
+      "processing": "byte-identical PNG copy; no pixel or curve changes",
+      "media": {
+        "format": "PNG",
+        "width": 1280,
+        "height": 720,
+        "mode": "RGB"
+      }
+    },
+    {
+      "role": "image",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-0/view_raised_overview.png",
+      "source_sha256": "cc6e2253c9a27a66f12671663d4847e3965e500241644a8e71b6096936ccb86b",
+      "source_bytes": 282398,
+      "export": "website/assets/img/industrial-aerial.png",
+      "export_sha256": "cc6e2253c9a27a66f12671663d4847e3965e500241644a8e71b6096936ccb86b",
+      "export_bytes": 282398,
+      "processing": "byte-identical PNG copy; no pixel or curve changes",
+      "media": {
+        "format": "PNG",
+        "width": 1280,
+        "height": 720,
+        "mode": "RGB"
+      }
+    },
+    {
+      "role": "image",
+      "source": "artifacts/p1_phy/ber_theory_vs_simulation.png",
+      "source_sha256": "144ee28039fd70be1dd230d153a20747a18c62468d4a79125079cd2eb438ad16",
+      "source_bytes": 90791,
+      "export": "website/assets/img/qpsk-ber.png",
+      "export_sha256": "144ee28039fd70be1dd230d153a20747a18c62468d4a79125079cd2eb438ad16",
+      "export_bytes": 90791,
+      "processing": "byte-identical PNG copy; no pixel or curve changes",
+      "media": {
+        "format": "PNG",
+        "width": 1360,
+        "height": 884,
+        "mode": "RGBA"
+      }
+    },
+    {
+      "role": "image",
+      "source": "artifacts/p1_phy/rrc_rolloff_psd.png",
+      "source_sha256": "91194f0282316cf0dfd9e5f1757e8aa64361ee56a9ab54443a5a796ec2c2b221",
+      "source_bytes": 224117,
+      "export": "website/assets/img/rrc-psd.png",
+      "export_sha256": "91194f0282316cf0dfd9e5f1757e8aa64361ee56a9ab54443a5a796ec2c2b221",
+      "export_bytes": 224117,
+      "processing": "byte-identical PNG copy; no pixel or curve changes",
+      "media": {
+        "format": "PNG",
+        "width": 1530,
+        "height": 884,
+        "mode": "RGBA"
+      }
+    },
+    {
+      "role": "image",
+      "source": "artifacts/p1_phy/passband_waveform_constellation.png",
+      "source_sha256": "59686b31d4cd334229e2892398fe92fb3788b419a59995be49cc1857b093906d",
+      "source_bytes": 221635,
+      "export": "website/assets/img/qpsk-waveform-constellation.png",
+      "export_sha256": "59686b31d4cd334229e2892398fe92fb3788b419a59995be49cc1857b093906d",
+      "export_bytes": 221635,
+      "processing": "byte-identical PNG copy; no pixel or curve changes",
+      "media": {
+        "format": "PNG",
+        "width": 1700,
+        "height": 1020,
+        "mode": "RGBA"
+      }
+    },
+    {
+      "role": "image",
+      "source": "artifacts/p2_semantic/p2_end_to_end_metrics.png",
+      "source_sha256": "1e9306ec6b84dafdea54df9de0ca8065d096f540db646c0933d824941033d00f",
+      "source_bytes": 105534,
+      "export": "website/assets/img/semantic-frame-metrics.png",
+      "export_sha256": "1e9306ec6b84dafdea54df9de0ca8065d096f540db646c0933d824941033d00f",
+      "export_bytes": 105534,
+      "processing": "byte-identical PNG copy; no pixel or curve changes",
+      "media": {
+        "format": "PNG",
+        "width": 2240,
+        "height": 704,
+        "mode": "RGBA"
+      }
+    },
+    {
+      "role": "video_cover",
+      "run_id": "awgn-8db",
+      "source": "artifacts/p3_s1_v2_industrial/randomized_seed_20261105/s1-3/s1-3_B_-30deg_seed0_captioned.mp4",
+      "source_sha256": "8a5769769decf0fa5aa922a89d9b3b66b3be580964e4e7a5a34142318ca95ba3",
+      "source_bytes": 1106969,
+      "source_time_s": 21.0,
+      "export": "website/assets/img/industrial-awgn-8db-cover.png",
+      "export_sha256": "b64a34c10e78722204920d4e36a6293a4ebc7dd513916c3d369e5c5890843909",
+      "export_bytes": 388822,
+      "processing": "single PNG frame extracted without crop or overlay changes",
+      "media": {
+        "format": "PNG",
+        "width": 1280,
+        "height": 720,
+        "mode": "RGB"
+      }
+    }
+  ]
+}

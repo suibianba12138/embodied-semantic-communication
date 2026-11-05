@@ -1,0 +1,31 @@
+# Python caches and virtual environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local credentials and machine configuration
+.env
+.env.*
+!.env.example
+.aws/
+.codex/
+.agents/
+*.pem
+*.key
+*credentials*
+*secret*
+*token*
+
+# Model weights, raw experiment outputs and temporary logs
+*.onnx
+*.pt
+*.pth
+*.ckpt
+*.pkl
+artifacts/
+.planning/
+*.log

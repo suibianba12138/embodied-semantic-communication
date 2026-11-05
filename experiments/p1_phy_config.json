@@ -1,0 +1,22 @@
+{
+  "experiment": "P1_PHY",
+  "frozen_spec": "P0C_EMBODIED_SEMANTIC_COMM_FROZEN_SPEC.md",
+  "master_seed": 20261104,
+  "ebn0_db": [0, 2, 4, 6, 8, 10],
+  "baseband_bit_budget_per_point": 2000000,
+  "passband_compare_ebn0_db": [0, 4, 8],
+  "passband_bit_budget_per_point": 500000,
+  "alpha_sweep": [0.2, 0.35, 0.5],
+  "rrc_span_symbols": 10,
+  "samples_per_symbol": 16,
+  "symbol_rate_hz": 4800,
+  "carrier_hz": 20000,
+  "chunk_symbols": 8192,
+  "confidence_level": 0.95,
+  "notes": [
+    "Eb=Es/2=0.5; N0=0.5/(Eb/N0 linear)",
+    "complex baseband sample E|w|^2=N0; real passband sample variance=N0/2",
+    "span symbols at both chunk edges are excluded from BER to remove finite-filter boundary transients",
+    "all random streams use deterministic seeds derived from master_seed, mode and Eb/N0"
+  ]
+}

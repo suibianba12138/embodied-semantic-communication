@@ -1,0 +1,13 @@
+{
+  "master_seed": 20261104,
+  "ebn0_db": [0, 2, 4, 6, 8],
+  "frames_per_type_per_ebn0": 1000,
+  "simulated_receive_time_s": 0.05,
+  "rrc_alpha": 0.35,
+  "rrc_span_symbols": 10,
+  "samples_per_symbol": 16,
+  "v11_trace": null,
+  "raw_rgbd_assumed_depth_dtype": "float32",
+  "camera_width": 64,
+  "camera_height": 48
+}
