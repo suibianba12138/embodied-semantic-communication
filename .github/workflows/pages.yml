@@ -1,7 +1,13 @@
-# Manual-only publication: GitHub Pages is publicly reachable even when the
-# repository is private. Do NOT dispatch before G1 media rights are cleared.
+# Public project site: deploy only the static website/ directory.
+# To activate, select "GitHub Actions" in Settings -> Pages -> Build and deployment.
 name: Publish verified project website
+
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -15,21 +21,20 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout validated main
+      - name: Checkout current main
         uses: actions/checkout@v6
-        with:
-          ref: main
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload static site only
+      - name: Upload static site
         uses: actions/upload-pages-artifact@v4
         with:
           path: website
-      - name: Deploy Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
