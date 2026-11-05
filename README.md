@@ -17,8 +17,8 @@
 
 <br>
 
-**[Project Website Source](website/)** &nbsp;·&nbsp;
-**[Interactive Communication Replay](website/#demo)** &nbsp;·&nbsp;
+**[Project Website](https://suibianba12138.github.io/embodied-semantic-communication/)** &nbsp;·&nbsp;
+**[Interactive Communication Replay](https://suibianba12138.github.io/embodied-semantic-communication/#demo)** &nbsp;·&nbsp;
 **[PHY Implementation](P1_PHY_IMPLEMENTATION_REPORT.md)** &nbsp;·&nbsp;
 **[G1 Experiment](P3_S1_V2_INDUSTRIAL_SHOWCASE_REPORT.md)**
 
@@ -98,7 +98,7 @@ The final simulated scene contains a multi-level shelf, control cabinet, stacked
 
 </div>
 
-**[Watch real 8 dB experiment video](website/assets/video/industrial-awgn-8db.mp4)** · **[See first-person split view](website/assets/video/industrial-awgn-8db-split.mp4)** · **[Inspect synchronized receiver events](website/#demo)**
+**[Watch real 8 dB experiment video](website/assets/video/industrial-awgn-8db.mp4)** · **[See first-person split view](website/assets/video/industrial-awgn-8db-split.mp4)** · **[Inspect synchronized receiver events](https://suibianba12138.github.io/embodied-semantic-communication/#demo)**
 
 ### Verified closed-loop results
 
@@ -209,6 +209,6 @@ python -m http.server 8000 --directory website
 
 **Embodied Semantic Communication · Communication Engineering Course Project**
 
-[Website](website/) · [Recorded Demo](website/#demo) · [Source](src/esc/) · [Reproduction](P1_PHY_README.md)
+[Project Website](https://suibianba12138.github.io/embodied-semantic-communication/) · [Recorded Demo](https://suibianba12138.github.io/embodied-semantic-communication/#demo) · [Source](src/esc/) · [Reproduction](P1_PHY_README.md)
 
 </div>
