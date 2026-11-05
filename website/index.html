@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08151b">
+  <meta name="description" content="A task-oriented semantic communication system with real QPSK simulation and closed-loop Unitree G1 locomotion in MuJoCo. Explore verified experiments and synchronized telemetry.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Embodied Semantic Communication — From bits to motion">
+  <meta property="og:description" content="QPSK • Semantic packets • G1 MuJoCo closed-loop experiments">
+  <meta property="og:image" content="./assets/img/industrial-awgn-8db-cover.png">
+  <title>Embodied Semantic Communication · From bits to motion</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2308151b'/%3E%3Cpath d='M11 40 22 23 33 40 44 23 54 40' fill='none' stroke='%2377dbcd' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./css/styles.css">
+  <script src="./js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Embodied Semantic Communication, home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-copy"><strong>EMBODIED<span class="brand-dot">.</span>COMM</strong><small>RESEARCH SYSTEM / 2026</small></span></a>
+    <nav aria-label="Main navigation" class="main-nav">
+      <a href="#system">System</a>
+      <a href="#phy">Communication</a>
+      <a href="#replay">Live replay</a>
+      <a href="#results">Evidence</a>
+    </nav>
+    <a class="nav-action" href="#replay">Explore experiment <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="main">
+    <section id="top" class="hero section-shell">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="live-point"></span> VERIFIED SIMULATION · P3-S1-V2 <span class="eyebrow-divider">/</span> 2026.11</div>
+        <h1>From <em>bits</em><br>to <span class="outline-type">motion.</span></h1>
+        <p class="hero-deck">A digital communication link is not just a curve on a plot. Here, transmitted task semantics become commands—and commands become movement.</p>
+        <p class="hero-zh" lang="zh-CN">面向具身智能机器人的任务导向语义通信系统 · 从 QPSK 传输到 G1 运动闭环</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#replay">Launch synchronized replay <span aria-hidden="true">↗</span></a>
+          <a class="text-link" href="#system">How the system works <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="hero-index"><span>01 / THE SYSTEM</span><span class="hairline"></span><span>COMMUNICATION × EMBODIMENT</span></div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-frame">
+          <video class="hero-video" id="heroVideo" src="./assets/video/industrial-awgn-8db.mp4" poster="./assets/img/industrial-awgn-8db-cover.png" autoplay muted loop playsinline preload="metadata" aria-label="Real MuJoCo G1 robot navigating an industrial scene under simulated 8 dB QPSK communication"></video>
+          <div class="video-shade" aria-hidden="true"></div>
+          <div class="hero-visual-top"><span class="camera-label"><span class="camera-indicator"></span> MUJOCO / G1 / CAMERA 03</span><span>EXPERIMENT 03—AWGN</span></div>
+          <div class="hero-visual-bottom"><div><small>PHYSICAL-LAYER LINK</small><strong>QPSK <span class="signal-slash">/</span> 8 dB</strong></div><a class="video-corner-link" href="#replay" aria-label="Open the complete synchronized replay">↗</a></div>
+        </div>
+        <div class="floating-tag tag-top"><span>PHY</span> 4,800 sym/s</div>
+        <div class="floating-tag tag-bottom"><span>ROBOT</span> 50 Hz control</div>
+      </div>
+    </section>
+
+    <div class="metric-ribbon section-shell" aria-label="Highlights from the fixed 8 dB industrial showcase">
+      <div><span class="metric-num">26.22<span>s</span></span><span class="metric-label">COMPLETED TASK</span></div>
+      <div><span class="metric-num">97.90<span>%</span></span><span class="metric-label">FRAMES ACCEPTED · 8 dB</span></div>
+      <div><span class="metric-num">22</span><span class="metric-label">COLLIDABLE SCENE GEOMS</span></div>
+      <div><span class="metric-num">11<span>/525</span></span><span class="metric-label">REJECTED FRAMES · 8 dB</span></div>
+    </div>
+
+    <section id="system" class="section-shell section-block">
+      <div class="section-heading"><span class="section-kicker">01 — THE CLOSED LOOP</span><h2>Information that<br><em>moves a robot.</em></h2><p>The robot's RGB-D camera extracts a compact target observation. A simulated digital link carries it to the edge controller and returns velocity commands. Unitree G1 executes through an existing ONNX locomotion policy inside MuJoCo.</p></div>
+      <div class="pipeline" aria-label="Six-stage communication and control loop">
+        <article class="stage"><span class="stage-no">01</span><span class="stage-symbol" aria-hidden="true">◉</span><h3>Perceive</h3><p>64 × 48 RGB-D<br>target geometry</p><small>ON ROBOT</small></article>
+        <article class="stage"><span class="stage-no">02</span><span class="stage-symbol" aria-hidden="true">⌗</span><h3>Encode</h3><p>OBS semantic frame<br>96-bit wire v1</p><small>UPLINK PAYLOAD</small></article>
+        <article class="stage highlighted"><span class="stage-no">03</span><span class="stage-symbol" aria-hidden="true">〰</span><h3>Transmit</h3><p>Gray QPSK · RRC<br>AWGN · CRC</p><small>SIMULATED LINK</small></article>
+        <article class="stage"><span class="stage-no">04</span><span class="stage-symbol" aria-hidden="true">◇</span><h3>Decide</h3><p>Search · Align<br>Approach · Stop</p><small>EDGE CONTROLLER</small></article>
+        <article class="stage highlighted"><span class="stage-no">05</span><span class="stage-symbol" aria-hidden="true">〰</span><h3>Return</h3><p>CMD velocity frame<br>QPSK downlink</p><small>SIMULATED LINK</small></article>
+        <article class="stage"><span class="stage-no">06</span><span class="stage-symbol" aria-hidden="true">↗</span><h3>Execute</h3><p>G1 ONNX policy<br>MuJoCo physics</p><small>50 Hz CLOSED LOOP</small></article>
+      </div>
+      <div class="system-footnote"><span class="footnote-mark">↺</span><p><strong>Two rates, one loop.</strong> Communication and camera update at 10 Hz; the locomotion controller runs at 50 Hz. CRC-rejected commands are not delivered; a bounded command-hold/TTL mechanism handles gaps.</p><span class="tag-outline">SIMULATION, NOT RF HARDWARE</span></div>
+    </section>
+
+    <section id="phy" class="section-shell section-block signal-section">
+      <div class="section-heading"><span class="section-kicker">02 — DIGITAL PHYSICAL LAYER</span><h2>Under the hood:<br><em>real signal processing.</em></h2><p>The physical layer is implemented numerically, not represented by a random packet-loss switch. QPSK, pulse shaping, Gaussian noise and matched filtering are explicitly computed and checked against theory.</p></div>
+      <div class="signal-layout">
+        <div class="spec-panel">
+          <div class="panel-topline"><span>TRANSMIT / RECEIVE CONTRACT</span><span>QPSK · GRAY</span></div>
+          <div class="qpsk-figure" aria-label="Four-point QPSK symbol constellation">
+            <svg viewBox="0 0 320 260" role="img" aria-label="QPSK constellation with 00, 01, 11, and 10 Gray bit pairs">
+              <g class="plot-grid"><path d="M40 44H284M40 88H284M40 132H284M40 176H284M40 220H284M72 25V239M116 25V239M160 25V239M204 25V239M248 25V239"></path></g>
+              <path class="plot-axis" d="M30 132H288M160 238V20"></path><text x="289" y="126">I</text><text x="167" y="21">Q</text>
+              <circle class="constellation-halo" cx="220" cy="72" r="19"></circle><circle class="constellation-halo" cx="220" cy="192" r="19"></circle><circle class="constellation-halo" cx="100" cy="72" r="19"></circle><circle class="constellation-halo" cx="100" cy="192" r="19"></circle>
+              <circle class="constellation-dot" cx="220" cy="72" r="5"></circle><circle class="constellation-dot" cx="220" cy="192" r="5"></circle><circle class="constellation-dot" cx="100" cy="72" r="5"></circle><circle class="constellation-dot" cx="100" cy="192" r="5"></circle>
+              <g class="plot-label"><text x="236" y="65">00</text><text x="236" y="209">01</text><text x="63" y="65">10</text><text x="63" y="209">11</text></g>
+            </svg>
+            <div class="qpsk-caption">SCHEMATIC CONSTELLATION / GRAY MAPPING</div>
+          </div>
+          <div class="spec-grid">
+            <div><small>SYMBOL RATE</small><strong>4,800 <span>Baud</span></strong></div>
+            <div><small>BIT RATE</small><strong>9,600 <span>bps</span></strong></div>
+            <div><small>RRC ROLL-OFF</small><strong>0.35 <span>α</span></strong></div>
+            <div><small>PASSBAND DEMO</small><strong>20 <span>kHz</span></strong></div>
+          </div>
+        </div>
+        <div class="wire-panel">
+          <div class="panel-topline"><span>APPLICATION FRAME / WIRE v1</span><span>96 BITS</span></div>
+          <h3>Send the meaning.<br><em>Not every pixel.</em></h3>
+          <p>For this color-target task, a compact structured observation carries target identity, validity, distance, bearing and timestamp instead of a full RGB-D image. The observation is task-specific—not reversible image compression.</p>
+          <div class="frame-label">96-BIT FRAME BREAKDOWN</div>
+          <div class="frame-bar" role="img" aria-label="Frame: 16 preamble bits, 12 header bits, 52 payload bits, 16 CRC bits"><span class="frame-preamble" style="flex:16">16</span><span class="frame-header" style="flex:12">12</span><span class="frame-payload" style="flex:52">52</span><span class="frame-crc" style="flex:16">16</span></div>
+          <div class="frame-legend"><span><i class="legend-square p"></i>Preamble</span><span><i class="legend-square h"></i>Header</span><span><i class="legend-square d"></i>Payload</span><span><i class="legend-square c"></i>CRC-16</span></div>
+          <div class="wire-stat"><span>OBS MESSAGE</span><strong>color · valid · range · bearing · time</strong></div>
+          <div class="wire-stat"><span>CMD MESSAGE</span><strong>vx · vy · wz · TTL · mode</strong></div>
+          <div class="wire-caution">The 1,792:1 raw RGB-D / OBS frame bit-count ratio compares different representations, not equivalent image quality.</div>
+        </div>
+      </div>
+      <div class="figure-grid">
+        <figure class="figure-card"><div class="figure-visual"><img src="./assets/img/qpsk-ber.png" loading="lazy" alt="Measured QPSK bit error rates versus Eb/N0 compared with theoretical values"></div><figcaption><span>FIGURE 01 / BIT ERROR</span><strong>Measured BER tracks theory</strong><p>AWGN · complex baseband and coherent passband</p></figcaption></figure>
+        <figure class="figure-card"><div class="figure-visual"><img src="./assets/img/rrc-psd.png" loading="lazy" alt="Power spectral density curves for different root-raised cosine roll-off factors"></div><figcaption><span>FIGURE 02 / BANDWIDTH</span><strong>Pulse shaping with RRC</strong><p>PSD comparison · roll-off 0.20, 0.35, 0.50</p></figcaption></figure>
+        <figure class="figure-card"><div class="figure-visual"><img src="./assets/img/qpsk-waveform-constellation.png" loading="lazy" alt="Computed 20 kHz passband waveform and coherent receiver constellation"></div><figcaption><span>FIGURE 03 / WAVEFORM</span><strong>Passband &amp; constellation</strong><p>Numerical 20 kHz carrier simulation</p></figcaption></figure>
+        <figure class="figure-card"><div class="figure-visual"><img src="./assets/img/semantic-frame-metrics.png" loading="lazy" alt="Semantic frame acceptance and task-specific restoration metrics versus Eb/N0"></div><figcaption><span>FIGURE 04 / SEMANTICS</span><strong>From BER to message delivery</strong><p>96-bit OBS/CMD · CRC error detection</p></figcaption></figure>
+      </div>
+    </section>
+
+    <section id="replay" class="section-block replay-section">
+      <div class="section-shell">
+        <div class="section-heading replay-heading"><span class="section-kicker">03 — SYNCHRONIZED EVIDENCE REPLAY</span><h2>Follow the <em>signal.</em><br>Watch the <em>motion.</em></h2><p>One MuJoCo episode, one communication trace. Pause at a CRC rejection, inspect the received command, and jump between events. Every changing value below comes from the matching recorded run.</p></div>
+        <div class="replay-app" id="replayApp">
+          <div class="replay-header"><div class="replay-title"><span class="small-indicator"></span><span>RUN PLAYBACK</span><small>B_-30deg_seed0 · INDUSTRIAL LAB · LAYOUT 20261105</small></div><div class="run-switch" role="group" aria-label="Select a recorded communication condition"><button type="button" data-run="ideal" aria-pressed="false">Ideal</button><button type="button" data-run="noiseless" aria-pressed="false">Noiseless QPSK</button><button type="button" data-run="awgn-8db" class="active" aria-pressed="true">AWGN · 8 dB</button></div></div>
+          <div class="replay-columns">
+            <div class="replay-left">
+              <div class="replay-video-wrap"><video id="replayVideo" controls playsinline preload="metadata" poster="./assets/img/industrial-awgn-8db-cover.png" src="./assets/video/industrial-awgn-8db.mp4" aria-label="Recorded MuJoCo G1 navigation video; choose a run above to switch communication conditions"></video><div class="replay-stamp"><span>SIMULATED EXPERIMENT</span><strong id="stampTime">T+00.00s</strong></div></div>
+              <div class="replay-toolbar"><span id="replayRunLabel">AWGN 8 dB · fixed seed 303</span><div><button type="button" id="viewSplit" aria-pressed="false">Show robot camera ↗</button><span>25 FPS / 50 HZ POLICY</span></div></div>
+              <div class="trace-chart"><div class="chart-header"><div><span>ROBOT HEADING</span><strong>Yaw across the episode</strong></div><span id="headingNow">—</span></div><svg id="headingChart" viewBox="0 0 740 132" preserveAspectRatio="none" role="img" aria-label="Actual robot heading history from the selected experiment"><path class="chart-grid" d="M34 12H724M34 49H724M34 86H724M34 123H724"></path><path id="headingPath" class="chart-line" d=""></path><line id="headingCursor" class="chart-cursor" x1="34" x2="34" y1="12" y2="123"></line><text class="chart-tick" x="34" y="131">0s</text><text class="chart-tick" x="340" y="131">TIME →</text><text class="chart-tick" x="694" y="131">26s</text></svg></div>
+            </div>
+            <aside class="telemetry" aria-label="Time-synchronized robot and communication telemetry">
+              <div class="telemetry-heading"><span>TELEMETRY / TRACE-BOUND</span><span class="telemetry-pulse">● DATA-DRIVEN</span></div>
+              <div class="telemetry-top"><div><small>CONTROLLER STATE</small><strong id="controllerState">—</strong></div><div><small>LINK CONDITION</small><strong id="linkCondition">8 dB</strong></div></div>
+              <div class="telemetry-metrics">
+                <div><small>TARGET RANGE</small><strong id="targetRange">—</strong></div>
+                <div><small>TARGET BEARING</small><strong id="targetBearing">—</strong></div>
+                <div><small>CMD AGE</small><strong id="cmdAge">—</strong></div>
+                <div><small>APPLIED Vx</small><strong id="appliedVx">—</strong></div>
+              </div>
+              <div class="frame-status"><div class="frame-status-head"><span>LAST RECEIVED FRAME</span><span id="lastRxClock">—</span></div><div class="rx-row"><span>UPLINK · OBS</span><strong id="obsStatus">Awaiting event</strong></div><div class="rx-row"><span>DOWNLINK · CMD</span><strong id="cmdStatus">Awaiting event</strong></div></div>
+              <div class="telemetry-counter"><div><small>FRAMES ACCEPTED / SEEN</small><strong id="acceptedCount">—</strong></div><div><small>REJECTS TO DATE</small><strong id="rejectCount">—</strong></div></div>
+              <div class="trace-loading" id="traceStatus" role="status" aria-live="polite">Loading trace linked to this video…</div>
+            </aside>
+          </div>
+          <div class="events-panel"><div class="events-header"><div><span>RECEIVER EVENT LOG</span><h3>Inspect rejected frames</h3><p id="eventsDescription">Select a rejection to jump to its receive time in the associated video.</p></div><span id="eventsTotal" class="event-count">— EVENTS</span></div><div id="eventButtons" class="event-list"><p class="event-placeholder">Loading recorded events…</p></div><div class="events-foot">All rejections are retained from the original trace. Event buttons seek within the selected episode; they do not imply a visible change in movement.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="section-shell section-block results-section">
+      <div class="section-heading"><span class="section-kicker">04 — WHAT THE EXPERIMENT SHOWS</span><h2>The link degrades.<br><em>The task still completes.</em></h2><p>Three matched industrial-lab runs on a single fixed layout. Transmission errors at 8 dB caused rejection of 11 frames, while the existing bounded command hold allowed this particular task to complete.</p></div>
+      <div class="results-table-wrap"><table class="results-table"><caption>Verified P3-S1-V2 fixed-layout outcomes</caption><thead><tr><th scope="col">Condition</th><th scope="col">Task</th><th scope="col">Duration</th><th scope="col">Path</th><th scope="col">BER</th><th scope="col">Frames received</th></tr></thead><tbody><tr><th scope="row"><span class="table-symbol neutral"></span> Ideal messages</th><td><span class="result-success">● Success</span></td><td>26.32 s</td><td>3.207 m</td><td>Not applicable</td><td>527 / 527</td></tr><tr><th scope="row"><span class="table-symbol quiet"></span> QPSK / noiseless</th><td><span class="result-success">● Success</span></td><td>26.32 s</td><td>3.209 m</td><td>0 / 50,592</td><td>527 / 527</td></tr><tr class="emphasis-row"><th scope="row"><span class="table-symbol noisy"></span> QPSK / 8 dB AWGN</th><td><span class="result-success">● Success</span></td><td>26.22 s</td><td>3.202 m</td><td>11 / 50,400</td><td>514 / 525</td></tr></tbody></table></div>
+      <div class="insight-grid"><div class="insight-primary"><span class="insight-eyebrow">KEY OBSERVATION</span><p>At 8 dB, <em>11 bit errors</em> led to <em>11 rejected frames</em>—yet the recorded robot still reached its target.</p><span>This is a bounded result from one scenario and one channel seed, not a general robustness guarantee.</span></div><div class="insight-side"><span class="insight-eyebrow">SCENE / VERIFICATION</span><strong>6</strong><p>distinct industrial prop groups</p><div class="insight-rule"></div><strong>0</strong><p>observed obstacle contacts in these runs</p></div></div>
+    </section>
+
+    <section id="limits" class="section-shell section-block limitations-section"><div class="limitation-heading"><span class="section-kicker">05 — SCOPE &amp; REPRODUCIBILITY</span><h2>Precisely what<br><em>this is—and isn't.</em></h2></div><div class="limit-grid"><article><span>01 / LINK</span><h3>Computed, not over-the-air</h3><p>AWGN and passband/baseband waveforms are numerical simulations with ideal known synchronization. No radio hardware was used.</p></article><article><span>02 / NAVIGATION</span><h3>Obstacles, not obstacle avoidance</h3><p>The verified layout leaves a clear route. The robot searches for a target but does not plan collision-avoiding paths around blocked obstacles.</p></article><article><span>03 / CLAIMS</span><h3>Single-scene evidence</h3><p>Only one fixed layout and one robot seed were tested here. ONNX/model and asset redistribution permissions are still under review; no generalization is claimed.</p></article></div><div class="research-note"><div><small>DATA INTEGRITY</small><strong>Trace-linked / fixed-seed / reproducible media mapping</strong></div><a href="./README.md">Implementation &amp; local preview guide <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="site-footer"><div class="section-shell footer-inside"><div><a class="footer-brand" href="#top">EMBODIED<span>.</span>COMM</a><p>Task-oriented semantic communication for embodied robots.<br>Digital communications meet real simulated movement.</p></div><div class="footer-right"><span>COURSE DESIGN RESEARCH PROTOTYPE</span><span>MUJOCO · UNITREE G1 · QPSK</span><a href="#top">BACK TO TOP ↑</a></div></div><div class="section-shell footer-bottom"><span>© 2026 · Project demonstration · No live robot or RF hardware</span><span>Designed around verified experiment evidence</span></div></footer>
+</body>
+</html>
