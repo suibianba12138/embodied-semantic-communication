@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light"><meta name="theme-color" content="#fafafa">
+<meta name="description" content="A QPSK-based task-oriented semantic communication system demonstrated with Unitree G1 in MuJoCo, with a trace-synchronized communication replay.">
+<meta property="og:title" content="Embodied Semantic Communication"><meta property="og:description" content="From digital communication to embodied robot action. Verified QPSK and G1 MuJoCo experiments."><meta property="og:image" content="./assets/img/industrial-awgn-8db-cover.png">
+<title>Embodied Semantic Communication | Project Page</title>
+<link rel="stylesheet" href="./css/styles.css"><script src="./js/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#demo">Skip to demo</a>
+<header class="topbar"><div class="top-inner"><a class="brand" href="#top"><span class="brand-icon" aria-hidden="true">◈</span> Embodied Semantic Communication</a><nav aria-label="Primary"><a href="#overview">Overview</a><a href="#demo">Demo</a><a href="#method">Method</a><a href="#experiments">Results</a><a href="https://github.com/suibianba12138/embodied-semantic-communication">GitHub ↗</a></nav></div></header>
+<main>
+<section class="hero wrap" id="top">
+  <div class="eyebrow">COMMUNICATION ENGINEERING · COURSE PROJECT · NOVEMBER 2026</div>
+  <h1>Embodied Semantic Communication</h1>
+  <p class="subtitle">A QPSK-Based Task-Oriented Communication System<br class="wide-break"> for Closed-Loop Humanoid Robot Navigation</p>
+  <p class="subtitle-zh" lang="zh-CN">面向具身智能机器人的任务导向语义通信系统设计与仿真</p>
+  <div class="hero-links"><a class="pill primary" href="#demo">▶ Interactive Demo</a><a class="pill" href="#method">System &amp; Method</a><a class="pill" href="#experiments">Experimental Results</a><a class="pill" href="https://github.com/suibianba12138/embodied-semantic-communication">Code / GitHub ↗</a></div>
+  <figure class="cover"><img src="./assets/img/industrial-overview.png" alt="MuJoCo industrial lab: Unitree G1 among shelving, equipment, safety barriers and a red target"><figcaption>Verified industrial-laboratory simulation · six prop groups · 22 collidable geoms. The route remains clear; this is not obstacle avoidance.</figcaption></figure>
+</section>
+
+<section class="wrap prose" id="overview">
+  <h2>Abstract</h2>
+  <p>Traditional digital-communication demonstrations often stop at bit error rate. This project connects a complete numerically simulated <strong>QPSK physical layer</strong> to a concrete robotics task. A Unitree G1 extracts a compact target observation from RGB-D images, transmits a 96-bit semantic message over an AWGN channel, receives velocity commands over a second QPSK link, and executes through an existing locomotion policy in MuJoCo.</p>
+  <p>Communication reliability is measured both at the bit/frame level and at the task level. In the verified fixed-layout 8 dB experiment, <strong>11 of 525 frames were rejected</strong>, yet the robot reached its target. This is a software simulation with ideal synchronization, not over-the-air radio or generalized autonomous obstacle avoidance.</p>
+</section>
+
+<section class="wrap demo-section" id="demo">
+  <div class="section-head"><div><div class="kicker">DEMONSTRATION</div><h2>Robot Motion × Communication Replay</h2><p>Recorded MuJoCo video and the matching 10 Hz uplink/downlink communication events, synchronized using the original 50 Hz policy trace.</p></div><span class="evidence-label">REAL TRACE · REPLAY</span></div>
+  <div class="demo-tabs" role="group" aria-label="Experiment condition">
+    <button type="button" class="tab" data-run="ideal" aria-pressed="false">Ideal messages</button>
+    <button type="button" class="tab" data-run="noiseless" aria-pressed="false">Noiseless QPSK</button>
+    <button type="button" class="tab active" data-run="awgn-8db" aria-pressed="true">QPSK + AWGN · 8 dB</button>
+  </div>
+  <div class="demo-grid" id="replayApp">
+    <div class="demo-media">
+      <div class="video-box">
+        <video id="replayVideo" controls playsinline preload="metadata" poster="./assets/img/industrial-awgn-8db-cover.png" src="./assets/video/industrial-awgn-8db.mp4" aria-label="Actual MuJoCo robot episode recorded at fixed 8 dB AWGN"></video>
+        <div class="frame-clock" id="frameClock">T + 00.00 s</div>
+      </div>
+      <div class="video-actions"><span>G1 · INDUSTRIAL LAB · LAYOUT 20261105</span><button type="button" id="toggleCamera" aria-pressed="false">Robot camera split view ↗</button></div>
+      <div class="robot-strip" aria-label="Robot status from recorded policy">
+        <div><small>Controller</small><strong id="controllerState">—</strong></div>
+        <div><small>Target distance</small><strong id="targetRange">—</strong></div>
+        <div><small>Heading</small><strong id="robotHeading">—</strong></div>
+        <div><small>Applied forward command</small><strong id="appliedVx">—</strong></div>
+      </div>
+    </div>
+    <aside class="comm-panel" aria-label="Synchronized recorded communication">
+      <div class="comm-header"><div><small>COMMUNICATION CHANNEL</small><strong id="linkCondition">8 dB AWGN</strong></div><span class="recorded">● RECORDED TELEMETRY</span></div>
+      <div class="link-diagram" aria-label="Uplink and downlink packet delivery">
+        <div class="nodes"><div><span>01</span><strong>G1 · OBS</strong><small>PERCEPTION</small></div><div><span>02</span><strong>EDGE</strong><small>DECISION</small></div><div><span>03</span><strong>G1 · CMD</strong><small>ACTUATION</small></div></div>
+        <div class="signal-lane uplink" id="uplinkLane"><span class="lane-label">UPLINK · OBS</span><div class="lane-track"><span class="lane-packet" id="uplinkPacket" aria-hidden="true"></span></div><b id="uplinkStatus">—</b></div>
+        <div class="signal-lane downlink" id="downlinkLane"><span class="lane-label">DOWNLINK · CMD</span><div class="lane-track"><span class="lane-packet" id="downlinkPacket" aria-hidden="true"></span></div><b id="downlinkStatus">—</b></div>
+        <p class="lane-note">Animations follow observed packet timestamps. No live RF or new robot simulation runs in this browser.</p>
+      </div>
+      <div class="packet-panel">
+        <div class="packet-heading"><strong id="packetLabel">MOST RECENT RECEIVED FRAME</strong><span id="packetTime">—</span></div>
+        <div class="packet-meta"><span id="packetDirection">—</span><span id="packetResult">—</span></div>
+        <div class="bit-title">TX BITS <span>96-BIT FRAME</span></div><div class="bitline" id="txBits" aria-label="Recorded transmitted bits">—</div>
+        <div class="bit-title">RX BITS <span id="bitErrorCount">—</span></div><div class="bitline" id="rxBits" aria-label="Recorded received bits">—</div>
+        <div class="packet-caption" id="packetInterpretation">Awaiting trace…</div>
+      </div>
+      <div class="small-metrics"><div><small>ACCEPTED / RECEIVED</small><strong id="acceptedCount">—</strong></div><div><small>REJECTED SO FAR</small><strong id="rejectedCount">—</strong></div><div><small>CMD AGE</small><strong id="cmdAge">—</strong></div></div>
+    </aside>
+  </div>
+  <div class="event-panel"><div class="event-head"><div><h3>Packet events</h3><p>Select a recorded CRC/preamble rejection to seek the exact time in the corresponding video.</p></div><span class="event-total" id="eventsTotal">—</span></div><div class="event-list" id="eventButtons"><span class="empty">Loading communication events…</span></div><div class="status-note" id="traceStatus" role="status" aria-live="polite">Loading matching video trace…</div></div>
+  <p class="source-note">The three videos represent <strong>separate matched runs</strong>, not one run with a changing channel. The graphics show recorded receive decisions. Pausing and seeking also updates the signal display. <a href="./README.md">Replay documentation →</a></p>
+</section>
+
+<section class="wrap" id="method"><div class="section-head"><div><div class="kicker">SYSTEM DESIGN</div><h2>Method</h2></div></div>
+  <div class="flow"><div><small>01</small><strong>RGB-D</strong><span>Detect color target, range and bearing</span></div><i>→</i><div><small>02</small><strong>OBS 96 bit</strong><span>Quantized task fields + CRC-16</span></div><i>→</i><div><small>03</small><strong>QPSK uplink</strong><span>RRC pulse shaping + AWGN</span></div><i>→</i><div><small>04</small><strong>Edge policy</strong><span>Search · Align · Approach · Stop</span></div><i>→</i><div><small>05</small><strong>QPSK downlink</strong><span>Velocity CMD, TTL and checks</span></div><i>→</i><div><small>06</small><strong>G1 / MuJoCo</strong><span>Existing ONNX policy at 50 Hz</span></div></div>
+  <div class="method-cols"><article><h3>Digital physical layer</h3><p>Gray QPSK at 4,800 symbols/s (9,600 bit/s), root-raised cosine filtering (α = 0.35), complex-baseband AWGN and matched-filter reception. An independent real-passband verification uses a 20 kHz numerical carrier.</p><p class="technical">RRC 161 taps · sampling 76.8 kHz · 16 samples/symbol · known timing and carrier</p></article><article><h3>Task-oriented message</h3><p>A 96-bit frame allocates 16 preamble, 12 header, 52 payload and 16 CRC bits. OBS carries target identity, range, bearing, validity and timestamp. CMD carries velocities, TTL and mode.</p><p class="technical">10 Hz OBS/CMD links · 50 Hz local motor policy · 200 ms command TTL</p></article></div>
+  <figure class="method-figure"><img loading="lazy" src="./assets/img/qpsk-waveform-constellation.png" alt="Actual P1 simulated passband waveform and constellation"><figcaption>Figure 1. P1 numerically simulated 20 kHz passband signal and coherent QPSK receiver constellation.</figcaption></figure>
+</section>
+
+<section class="wrap" id="experiments"><div class="section-head"><div><div class="kicker">QUANTITATIVE RESULTS</div><h2>Experiments</h2><p>Theoretical physical-layer behavior and recorded end-to-end robot execution are reported separately.</p></div></div>
+  <div class="figure-grid"><figure><img loading="lazy" src="./assets/img/qpsk-ber.png" alt="QPSK BER theoretical and measured curves"><figcaption>QPSK BER: theory versus simulated baseband and passband.</figcaption></figure><figure><img loading="lazy" src="./assets/img/rrc-psd.png" alt="RRC rolloff PSD curves"><figcaption>RRC pulse-shaping: spectral differences across roll-off factors.</figcaption></figure><figure><img loading="lazy" src="./assets/img/semantic-frame-metrics.png" alt="Measured semantic frame reception results"><figcaption>Semantic message reliability across channel conditions.</figcaption></figure><figure><img loading="lazy" src="./assets/img/industrial-aerial.png" alt="Top-down view of fixed industrial simulation layout"><figcaption>Final industrial environment: fixed layout seed and open passage.</figcaption></figure></div>
+  <div class="table-wrap"><table><caption>Fixed industrial scene, one G1 seed and one AWGN seed per condition</caption><thead><tr><th>Communication</th><th>Task</th><th>Time</th><th>Path</th><th>Bit errors</th><th>Accepted frames</th></tr></thead><tbody><tr><td>Ideal scheduled messages</td><td class="success">Success</td><td>26.32 s</td><td>3.207 m</td><td>PHY N/A</td><td>527 / 527</td></tr><tr><td>Noiseless QPSK</td><td class="success">Success</td><td>26.32 s</td><td>3.209 m</td><td>0 / 50,592</td><td>527 / 527</td></tr><tr><td>8 dB QPSK + AWGN</td><td class="success">Success</td><td>26.22 s</td><td>3.202 m</td><td>11 / 50,400</td><td>514 / 525</td></tr></tbody></table></div>
+  <p class="table-note"><strong>Interpretation.</strong> At 8 dB, all 11 bit-error frames were rejected (7 CRC, 4 preamble). The command-hold mechanism allowed task completion in this run, with no logged obstacle contacts. This is not evidence of robustness across layouts, seeds or blocked paths.</p>
+</section>
+<section class="wrap limitations" id="limitations"><h2>Limitations and scope</h2><p>The channel is numerically simulated with ideal synchronization; no real RF hardware was used. The G1 controller and locomotion policy are existing components, not a trained VLA or newly learned navigation system. The obstacle-rich scene intentionally preserves a clear route and does not demonstrate autonomous obstacle avoidance. Full robot asset/runtime redistribution is not included; third-party model and media usage rights require review before public release.</p><p>Source code, simulation evidence, experiment reports and media hashes are preserved in the repository. <a href="https://github.com/suibianba12138/embodied-semantic-communication">Project repository ↗</a></p></section>
+</main>
+<footer class="wrap footer"><span>Embodied Semantic Communication · 2026</span><span>Communication Engineering × Robotics · Recorded simulation project</span><a href="#top">Back to top ↑</a></footer>
+</body></html>
