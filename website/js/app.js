@@ -47,6 +47,8 @@ function observation(tick){
 }
 function commandVx(v){
  if(!v||typeof v!=='object')return null;
+ // P3-S1-V2 trace stores applied_cmd as [vx, vy, wz], not an object.
+ if(Array.isArray(v))return finite(v[0])?v[0]:null;
  if(finite(v.vx))return v.vx;
  if(finite(v.vx_m_s))return v.vx_m_s;
  return null;
